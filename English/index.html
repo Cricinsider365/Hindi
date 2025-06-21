@@ -1,149 +1,109 @@
-<html>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
-<title>TG_@Cricinsider365</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fancode Live Matches</title>
+  <link rel="shortcut icon" href="" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <style>
     body {
-        background-color: #000;
-        margin: 0;
+      background-color: #0f0f0f;
+      color: #fff;
     }
-
-    /* Container for video and logo */
-    .video-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background-color: black;
+    .match-card {
+      transition: all 0.3s ease-in-out;
+      background: linear-gradient(145deg, #1a1a1a, #1f1f1f);
     }
-
-    /* Style for the logo */
-    .logo {
-        position: absolute;
-        top: 10px; /* Adjust vertical position */
-        left: 10px; /* Adjust horizontal position */
-        z-index: 1; /* Ensure the logo appears above the video */
-        max-width: 120px; /* Set maximum width for the logo */
-        max-height: 120px; /* Set maximum height for the logo */
-        pointer-events: none; /* Prevent interference with video controls */
+    .match-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 40px rgba(0, 0, 0, 0.5);
     }
-
-    .shaka-spinner-container {
-        display: none;
+    .live-badge {
+      animation: pulse 1.5s infinite;
     }
-
-    .uc {
-        pointer-events: none;
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 15px 10px rgba(239, 68, 68, 0);
+      }
     }
-</style>
+    .match-img {
+      transition: transform 0.3s ease;
+    }
+    .match-card:hover .match-img {
+      transform: scale(1.03);
+    }
+  </style>
 </head>
+<body class="bg-gray-950 min-h-screen">
 
-<body>
-    <!-- Video container -->
-    <div class="video-container">
-        <!-- Logo inside the video -->
-        <img src="https://i.ibb.co/fMKnFg3/1000003992-removebg-preview.png" alt="Logo" class="logo">
-
-        <!-- Video player -->
-        <div data-shaka-player-container style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-            <video autoplay muted data-shaka-player id="video" poster="https://i.ibb.co/x7jXd29/In-Shot-20241215-002653932.jpg" style="width:100%; height:100%;"></video>
-        </div>
+  <!-- New Stylish Header -->
+  <header class="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 shadow-lg py-6 mb-10">
+    <div class="max-w-7xl mx-auto px-4">
+      <h1 class="text-4xl font-bold text-white text-center tracking-widest drop-shadow-sm">
+        ⚡ Fancode Live Matches
+      </h1>
     </div>
+  </header>
 
-    <script>
-    // Restrict iframe embedding
-    if (window.top !== window.self) {
-        window.addEventListener('DOMContentLoaded', function() {
-            // Clear the existing content
-            document.body.innerHTML = '';
+  <div class="max-w-7xl mx-auto px-4">
+    <div id="matches-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <!-- Matches will load here -->
+    </div>
+  </div>
 
-            // Add custom message
-            const messageDiv = document.createElement('div');
-            messageDiv.id = 'message';
-            messageDiv.textContent = 'Ab to copy mat kar chutiye By @Cricinsider365';
+  <script>
+    const container = document.getElementById('matches-container');
 
-            // Style the message
-            messageDiv.style.color = '#fff';
-            messageDiv.style.backgroundColor = '#000';
-            messageDiv.style.position = 'fixed';
-            messageDiv.style.top = '50%';
-            messageDiv.style.left = '50%';
-            messageDiv.style.transform = 'translate(-50%, -50%)';
-            messageDiv.style.padding = '20px';
-            messageDiv.style.borderRadius = '10px';
-            messageDiv.style.textAlign = 'center';
-            messageDiv.style.fontFamily = 'Arial, sans-serif';
-            messageDiv.style.fontSize = '20px';
+    fetch('https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json')
+      .then(response => response.json())
+      .then(data => {
+        const matches = data.matches;
 
-            // Append the message to the body
-            document.body.appendChild(messageDiv);
-        });
-    }
-
-    async function init() {
-        const video = document.getElementById("video");
-        const ui = video.ui;
-        const controls = ui.getControls();
-        const player = controls.getPlayer();
-
-        player.configure({
-            drm: {
-                clearKeys: {
-                    '1779c27b9d077a3ba0c9cc1bb9a94b9f': "cc5cf3b7928fb9e0a1ee6a8b566f0a8e"
-                }
-            }
-        });
-
-        ui.configure({
-            controlPanelElements: ["play_pause", "mute", "volume", "spacer", "time_and_duration", "quality", "fullscreen", "overflow_menu"],
-            volumeBarColors: {
-                base: "rgba(0, 0, 255, 1)", // Blue base color for the volume bar
-                level: "rgb(0, 255, 0)"     // Green color for the volume level
-            },
-            seekBarColors: {
-                base: "rgb(255, 0, 0)",       // Red base color for the seek bar
-                buffered: "rgb(255, 255, 0)", // Yellow color for the buffered portion
-                played: "rgba(0, 128, 128, 1)" // Teal color for the played portion
-            }
-        });
-window.player = player;
-        window.ui = ui;
-
-        player.addEventListener("error", onPlayerErrorEvent);
-        controls.addEventListener("error", onUIErrorEvent);
-
-        try {
-            await player.load("https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd");
-            console.log("The video has now been loaded!");
-        } catch (error) {
-            onPlayerError(error);
+        if (!matches || matches.length === 0) {
+          container.innerHTML = <p class="text-center text-yellow-500">No matches available right now.</p>;
+          return;
         }
-    }
 
-    function onPlayerErrorEvent(event) {
-        onPlayerError(event.detail);
-    }
+        matches.forEach(match => {
+          const isLive = match.status === 'LIVE';
 
-    function onPlayerError(error) {
-        console.error("Error code", error.code, "object", error);
-    }
+          const card = document.createElement('div');
+          card.className = rounded-2xl overflow-hidden shadow-xl match-card border border-gray-800 ${isLive ? 'ring-2 ring-red-600' : ''};
 
-    function onUIErrorEvent(event) {
-        onPlayerError(event.detail);
-    }
+          card.innerHTML = 
+            <div class="relative">
+              <img src="${match.src}" alt="${match.title}" class="w-full h-60 object-cover match-img">
+              ${isLive ? <span class="absolute top-3 left-3 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md live-badge">LIVE</span> : ''}
+            </div>
+            <div class="p-6">
+              <h2 class="text-2xl font-semibold text-white mb-1">${match.event_name}</h2>
+              <p class="text-gray-400 text-sm mb-1">${match.match_name}</p>
+              <p class="text-sm text-gray-500 mb-4">Start: ${match.startTime}</p>
+              <div class="flex flex-wrap gap-3">
+                ${match.dai_url && match.adfree_url ? 
+                  <a href="https://insiderlive1.free.nf/?videoUrl=${match.dai_url}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center shadow-md transition-all">
+                    <i class="fas fa-play mr-2"></i> Watch
+                  </a>
+                  <a href="https://insiderlive1.free.nf/?videoUrl=${match.adfree_url}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm flex items-center shadow-md transition-all">
+                    <i class="fas fa-ad mr-2"></i> Ad-Free
+                  </a>
+                 : <span class="text-gray-500 italic">Upcoming Match</span>}
+              </div>
+            </div>
+          ;
+container.appendChild(card);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching JSON:', error);
+        container.innerHTML = <p class="text-center text-red-500">Failed to load matches.</p>;
+      });
+  </script>
 
-    function initFailed() {
-        console.error("Unable to load the UI library!");
-    }
-
-    document.addEventListener("shaka-ui-loaded", init);
-    document.addEventListener("shaka-ui-load-failed", initFailed);
-
-    if (confirm("Join For More Links!!")) {
-        window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
-    }
-    </script>
 </body>
 </html>
