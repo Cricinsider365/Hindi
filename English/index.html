@@ -1,176 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Shaka Player Full Working Example</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
-  <style>
-    .shaka-video-container {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      background-color: black;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TG_@Cricinsider365</title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #242424, #3b5998);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* Glowing Effect for Message */
+        .loading-message {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-bottom: 10px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00; }
+            100% { box-shadow: 0 0 15px #ffcc00, 0 0 25px #ffcc00, 0 0 35px #ffcc00; }
+        }
+
+        /* Video Player Styling */
+        .player-container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .player-container iframe {
+            border-radius: 15px;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Join Telegram Button */
+        .join-telegram-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .join-telegram-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #008fd6;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .join-telegram-btn:hover {
+            background-color: #006bb3;
+        }
+    </style>
 </head>
 <body>
-  <div class="shaka-video-container">
-    <video></video>
-  </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Install shaka polyfills
-      shaka.polyfill.installAll();
+    <!-- Loading Message -->
+    <div class="loading-message">Share The Links With Your Friends</div>
 
-      if (!shaka.Player.isBrowserSupported()) {
-        console.error('Browser not supported');
-        return;
-      }
-
-      const video = document.querySelector('video');
-      const player = new shaka.Player(video);
-
-      const container = document.querySelector('.shaka-video-container');
-      const ui = new shaka.ui.Overlay(player, container, video);
-      
-      // UI config
-      ui.configure({
-        seekBarColors: {
-          base: 'rgba(255,255,255,.2)',
-          buffered: 'rgba(255,255,255,.4)',
-          played: 'rgb(255,0,0)',
-        },
-        controlPanelElements: [
-          'play_pause',
-          'time_and_duration',
-          'mute',
-          'volume',
-          'spacer',
-          'captions',
-          'quality',
-          'language',
-          'picture_in_picture',
-          'fullscreen',
-        ]
-      });
-
-      // Player config
-      player.configure({
-        drm: {
-          clearKeys: {
-            "df20894ec30954d3b28097c138f4cfda": "ff9b6292b1cddbd11a046029cb314634"
-          }
-        },
-        streaming: {
-          bufferingGoal: 30,
-          rebufferingGoal: 5,
-          bufferBehind: 30,
-          retryParameters: {
-            timeout: 15000,
-            maxAttempts: 3,
-            baseDelay: 500,
-            backoffFactor: 1.5
-          },
-          segmentRequestTimeout: 10000,
-          useNativeHlsOnSafari: true
-        },
-        manifest: {
-          retryParameters: {
-            timeout: 10000,
-            maxAttempts: 2
-          }
-        }
-      });
-
-      // Add custom request filter (headers injection)
-      player.getNetworkingEngine().registerRequestFilter((type, request) => {
-        request.headers['Referer'] = 'https://www.jiotv.com/';
-        request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6 ";
-        request.headers['Cookie'] = "__hdnea__=st=1750764110~exp=1750850510~acl=/*~hmac=1678d02bfae7cb31acec2f80540b3bfdf200e1f475bc7e5e2e6ab28ab1246520";
-
-        if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-            type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-            request.uris[0].indexOf('__hdnea__=') === -1) {
-          const separator = request.uris[0].includes('?') ? '&' : '?';
-          request.uris[0] += separator + '__hdnea__=st=1750764110~exp=1750850510~acl=/*~hmac=1678d02bfae7cb31acec2f80540b3bfdf200e1f475bc7e5e2e6ab28ab1246520';
-        }
-      });
-
-      player.addEventListener('error', (event) => {
-        console.error('Shaka Player Error:', event.detail);
-      });
-
-      // Load stream
-      try {
-        await player.load("https://jiotvmblive.cdn.jio.com/bpk-tv/Star_Sports_1_BTS/output/index.mpd");
-        console.log('The video has been loaded successfully.');
-        await tryAutoplay(video, container);
-      } catch (error) {
-        console.error('Error loading stream:', error);
-      }
-    });
-
-    // Autoplay helper function
-    async function tryAutoplay(video, container) {
-      const autoplayStrategies = [
-        async () => { video.muted = true; await video.play(); return true; },
-        async () => { video.muted = true; await delay(200); await video.play(); return true; },
-        async () => { video.muted = false; await video.play(); return true; }
-      ];
-
-      for (let i = 0; i < autoplayStrategies.length; i++) {
-        try {
-          await autoplayStrategies[i]();
-          console.log(`Autoplay success with strategy ${i + 1}`);
-          return true;
-        } catch (err) {
-          console.log(`Autoplay strategy ${i + 1} failed: ${err.message}`);
-        }
-      }
-
-      showPlayButton(video, container);
-      return false;
-    }
-
-    function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function showPlayButton(video, container) {
-      const button = document.createElement('div');
-      button.innerHTML = `
-        <div style="
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: rgba(0,0,0,0.8);
-          color: white;
-          padding: 15px 30px;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 18px;
-          border: 2px solid #f00;
-          z-index: 1000;">
-          ▶ Click to Play
+    <!-- Video Player Section -->
+    <div class="player-container">
+        <div style="padding:56.25% 0 0 0;position:relative;">
+            <iframe id="contentFrame" sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" 
+            frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen="true" scrolling="no" 
+            src="https://8088y.site/JioTv/play.php?id=1142" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
         </div>
-      `;
-      container.appendChild(button);
-      button.addEventListener('click', async () => {
-        try {
-          video.muted = false;
-          await video.play();
-          button.remove();
-        } catch (err) {
-          console.error("Manual play failed:", err);
-        }
-      });
-    }
-  </script>
+    </div>
+
+    <!-- Join Telegram Button -->
+    <div class="join-telegram-container">
+        <button class="join-telegram-btn" onclick="window.open('https://t.me/+IhSW51QysxU3NzY1', '_blank')">Join Telegram Channel</button>
+    </div>
+<script>
+// alert('Join Our Telegram For Latest update')
+         if (confirm("Join Our Telegram Channel @Cricinsider365") == true) {
+         window.open("
+https://t.me/+IhSW51QysxU3NzY1", '_blank');
+     }
+</script>
+
 </body>
 </html>
