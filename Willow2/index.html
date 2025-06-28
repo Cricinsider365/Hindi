@@ -91,7 +91,7 @@
         player.configure({
             drm: {
                 clearKeys: {
-                    '00225dc8fc5a457a396203793c26e765': "0017f88b5021eb9a18386de418c71c68"
+                    '5e833f4019554aa394ff6de2eb19bf78': "f60e08a145804890492f315b61789ac5"
                 }
             }
         });
@@ -115,7 +115,7 @@ window.player = player;
         controls.addEventListener("error", onUIErrorEvent);
 
         try {
-            await player.load("https://g002-sle-us-cmaf-prd-fy.cdn.peacocktv.com/co01/Content/CMAF_S2-CTR-4s/Live/channel(5018816-720591-49088c9aecf)/master.mpd");
+            await player.load("https://sundirectgo-live.pc.cdn.bitgravity.com/hd38/dth.mpd");
             console.log("The video has now been loaded!");
         } catch (error) {
             onPlayerError(error);
