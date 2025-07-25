@@ -115,7 +115,7 @@ window.player = player;
         controls.addEventListener("error", onUIErrorEvent);
 
         try {
-            await player.load("https://live-d-02-icc-ne.akamaized.net/variant/v1blackout/vcg-01-d/DASH_DASH/Live/channel(vcg-01-ch-hd-02)/hdntl=exp=1753466348~acl=%2Fvariant%2Fv1blackout%2Fvcg-01-d%2F*~data=hdntl~hmac=7cc125617e5f3afe4dc258de491b686ac692af6827b99273e2a428dacebcf198/manifest.mpd");
+            await player.load("https://live-d-02-icc-ne.akamaized.net/variant/v1blackout/vcg-01-d/DASH_DASH/Live/channel(vcg-01-ch-hd-02)/hdntl=exp=1753466348~acl=%2Fvariant%2Fv1blackout%2Fvcg-01-d%2F*~data=hdntl~hmac=7cc125617e5f3afe4dc258de491b686ac692af6827b99273e2a428dacebcf198/manifest.mpd?|User-Agent=CJ&drmScheme=clearkey&drmLicense=");
             console.log("The video has now been loaded!");
         } catch (error) {
             onPlayerError(error);
