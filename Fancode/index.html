@@ -20,6 +20,7 @@
       overflow: hidden;
     }
 
+    /* Logo */
     #logo {
       position: absolute;
       top: 80px;
@@ -27,12 +28,12 @@
       transform: translateX(-50%);
       cursor: pointer;
     }
-
     #logo img {
       width: 180px;
       height: auto;
     }
 
+    /* Video Player */
     #video {
       width: 90%;
       max-width: 720px;
@@ -43,12 +44,12 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
       transition: border 0.3s;
     }
-
     .fullscreen #video {
       border: none;
       box-shadow: none;
     }
 
+    /* Telegram Button */
     #telegramButton {
       display: flex;
       align-items: center;
@@ -67,7 +68,6 @@
       position: relative;
       transition: transform 0.3s, box-shadow 0.3s;
     }
-
     #telegramButton:hover {
       transform: scale(1.05);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
@@ -98,17 +98,15 @@
       autostart: true,
       mute: false,
       file: "https://in-mc-fdlive.fancode.com/mumbai/136732_english_hls_877e5c48d829506ta-di_h264/index.m3u8",
-      skin: {
-        name: "glow"
-      }
+      skin: { name: "glow" }
     });
 
-    // Handle fullscreen class
-    playerInstance.on('fullscreen', function (event) {
+    // Fullscreen handling
+    playerInstance.on("fullscreen", function (event) {
       if (event.fullscreen) {
-        document.body.classList.add('fullscreen');
+        document.body.classList.add("fullscreen");
       } else {
-        document.body.classList.remove('fullscreen');
+        document.body.classList.remove("fullscreen");
       }
     });
 
@@ -117,12 +115,12 @@
       window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
     }
 
-    // Logo redirect
+    // Logo redirect (same as Telegram for now)
     function redirectToWebsite() {
       window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
     }
 
-    // Optional: Prompt before redirecting
+    // Optional: prompt before redirect
     window.onload = function () {
       if (confirm("Join Our Telegram Channel to stay updated!")) {
         redirectToTelegram();
