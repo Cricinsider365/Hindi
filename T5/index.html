@@ -1,116 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TG_@Cricinsider365</title>
-    <style>
-        /* General Page Styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #242424, #3b5998);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-        }
-
-        /* Glowing Effect for Message */
-        .loading-message {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffcc00;
-            margin-bottom: 10px;
-            padding: 10px 20px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-            box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00;
-            animation: glow 1.5s infinite alternate;
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00; }
-            100% { box-shadow: 0 0 15px #ffcc00, 0 0 25px #ffcc00, 0 0 35px #ffcc00; }
-        }
-
-        /* Video Player Styling */
-        .player-container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 20px auto;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            overflow: hidden;
-            background: #000;
-        }
-
-        .player-container iframe {
-            border-radius: 15px;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Join Telegram Button */
-        .join-telegram-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .join-telegram-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background-color: #008fd6;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .join-telegram-btn:hover {
-            background-color: #006bb3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL to Iframe</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    #urlFormContainer {
+      padding: 10px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    #contentFrame {
+      width: 100%;
+      height: 100vh;
+      border: none;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Loading Message -->
-    <div class="loading-message">Share The Links With Your Friends</div>
+  <div id="urlFormContainer">
+    <form id="urlForm">
+      <label for="urlInput">URL:</label>
+      <input type="text" id="urlInput" name="urlInput" required>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
 
-    <!-- Video Player Section -->
-    <div class="player-container">
-        <div style="padding:56.25% 0 0 0;position:relative;">
-            <iframe id="contentFrame" sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" 
-            frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen="true" scrolling="no" 
-            src="https://allinonereborn.fun/events/player.html?url=https%3A%2F%2Fmini.allinonereborn.online%2Fevents%2Fstream_proxy.php%3Furl%3Dhttps%253A%252F%252Fsonymtmnew.akamaized.net%252Fv1%252Fmaster%252F0085f7057986fc2f8467089bb19b8b7e4f1bf8d7%252FmediaT21beprod-PlaybackConfig%252F2118979%252FIndia_vs0109%252FHIN%252Fstd_lrl-800300010.m3u8%253Fhdnea%253Dexp%253D1756776671~acl%253D%252F*~id%253D00808100713334089692795749580597~hmac%253Ddc933b1d7eafe1c0274b67ae5aad1b393367120be65ad034df5d9bf3f18d1687" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
-        </div>
-    </div>
+  <iframe id="contentFrame" 
+    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" 
+    frameborder="0" 
+    allowfullscreen="true">
+  </iframe>
 
-    <!-- Join Telegram Button -->
-    <div class="join-telegram-container">
-        <button class="join-telegram-btn" onclick="window.open('https://t.me/+IhSW51QysxU3NzY1', '_blank')">Join Telegram Channel</button>
-    </div>
-<script>
-// alert('Join Our Telegram For Latest update')
-         if (confirm("Join Our Telegram Channel @Cricinsider365") == true) {
-         window.open("
-https://t.me/+IhSW51QysxU3NzY1", '_blank');
-     }
-</script>
-<script>
-// alert('Join Our Telegram For Latest update')
-         if (confirm("Join Our Telegram Channel @Cricinsider365") == true) {
-         window.open("https://t.me/+IhSW51QysxU3NzY1", '_blank');
-     }
-</script>
+  <script>
+    // Function to get query parameter
+    function getQueryParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // Event listener for form submission
+    document.getElementById('urlForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var url = document.getElementById('urlInput').value;
+      if (url) {
+        window.location.href = `${window.location.pathname}?url=${encodeURIComponent(url)}`;
+      } else {
+        alert("Please enter a valid URL.");
+      }
+    });
+
+    // On page load, check for URL and set iframe src
+    window.onload = function() {
+      var url = getQueryParameter('url');
+      if (url) {
+        document.getElementById('contentFrame').src = url;
+        document.getElementById('urlFormContainer').style.display = 'none';
+      }
+    };
+  </script>
 
 </body>
 </html>
