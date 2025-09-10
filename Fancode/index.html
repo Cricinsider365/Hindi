@@ -5,8 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cricinsider365</title>
-  <!-- Fixed JWPlayer script -->
-  <script src="https://cdn.jsdelivr.net/npm/jwplayer@8.28.1/jwplayer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     body {
       margin: 0;
@@ -43,6 +42,12 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
       transition: border 0.3s;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     .fullscreen #video {
@@ -84,7 +89,9 @@
   </div>
 
   <!-- Video Player -->
-  <div id="video"></div>
+  <div id="video">
+    <video id="player" controls autoplay></video>
+  </div>
 
   <!-- Telegram Button -->
   <div id="telegramButton" onclick="redirectToTelegram()">
@@ -92,26 +99,16 @@
   </div>
 
   <script>
-    // Initialize JWPlayer
-    const playerInstance = jwplayer("video").setup({
-      width: "100%",
-      aspectratio: "16:9",
-      autostart: true,
-      mute: false,
-      file: "https://in-mc-fdlive.fancode.com/mumbai/136732_english_hls_877e5c48d829506ta-di_h264/index.m3u8", // working test file
-      skin: {
-        name: "glow"
-      }
-    });
+    const video = document.getElementById('player');
+    const videoSrc = "https://in-mc-fdlive.fancode.com/mumbai/136732_english_hls_877e5c48d829506ta-di_h264/index.m3u8"; // replace with your link
 
-    // Handle fullscreen class
-    playerInstance.on('fullscreen', function (event) {
-      if (event.fullscreen) {
-        document.body.classList.add('fullscreen');
-      } else {
-        document.body.classList.remove('fullscreen');
-      }
-    });
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = videoSrc;
+    }
 
     // Telegram redirect
     function redirectToTelegram() {
