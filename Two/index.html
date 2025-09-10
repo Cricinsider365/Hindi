@@ -1,146 +1,92 @@
-<html>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
-<title>TG_@Cricinsider365</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
-<style>
-    body {
-        background-color: #000;
-        margin: 0;
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL to Iframe</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
     }
-
-    .video-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background-color: black;
+    #urlFormContainer {
+      padding: 10px;
+      max-width: 500px;
+      margin: 0 auto;
     }
-
-    .logo {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 1;
-        max-width: 120px;
-        max-height: 120px;
-        pointer-events: none;
+    #contentFrame {
+      width: 100%;
+      height: calc(100vh - 130px); /* Adjusted for ads */
+      border: none;
     }
-
-    .shaka-spinner-container {
-        display: none;
+    .ad-container {
+      margin: 10px auto;
+      text-align: center;
     }
-
-    .uc {
-        pointer-events: none;
-    }
-</style>
-</head>
-
+  </style>
+  <!-- AClib Script -->
+  <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><link rel="dns-prefetch" href="//acscdn.com"><link rel="dns-prefetch" href="//adexchangeclear.com">
+<script type="text/javascript" src="https://acscdn.com/script/banner.js" data-adel="ban" a-lib="1"></script><style type="text/css">* {user-select: auto !important; -webkit-user-select: auto !important;}</style><input type="hidden" id="inject_idm_text_selection"></head>
 <body>
-    <div class="video-container">
-        <img src="https://i.ibb.co/fMKnFg3/1000003992-removebg-preview.png" alt="Logo" class="logo">
 
-        <div data-shaka-player-container style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-            <video autoplay muted data-shaka-player id="video" poster="https://i.ibb.co/x7jXd29/In-Shot-20241215-002653932.jpg" style="width:100%; height:100%;"></video>
-        </div>
-    </div>
-
-    <script>
-    if (window.top !== window.self) {
-        document.body.innerHTML = '';
-        const messageDiv = document.createElement('div');
-        messageDiv.textContent = 'Ab to copy mat kar chutiye By @Cricinsider365';
-        Object.assign(messageDiv.style, {
-            color: '#fff', backgroundColor: '#000', position: 'fixed',
-            top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            padding: '20px', borderRadius: '10px', textAlign: 'center',
-            fontFamily: 'Arial, sans-serif', fontSize: '20px'
+  <!-- AClib Banner -->
+  <div>
+    <script type="text/javascript">
+        aclib.runBanner({
+            zoneId: '10384946',
         });
-        document.body.appendChild(messageDiv);
-    }
-
-    async function init() {
-        const video = document.getElementById("video");
-        const ui = video.ui;
-        const controls = ui.getControls();
-        const player = controls.getPlayer();
-
-        // Your provided DRM clear key
-        const drmConfig = {
-            clearKeys: {
-                "400131994b445d8c8817202248760fda": "2d56cb6f07a75b9aff165d534ae2bfc4"
-            }
-        };
-
-        // Your provided cookie header
-        const cookieHeader = "__hdnea__=st=1750159300~exp=1750245700~acl=/*~hmac=dc9aefe01d42aec99a9cf17876cc0bc115ce2a38f69131a022c2a0f0563a9487";
-
-        // Stream URL
-        const streamUrl = "https://jiotvmblive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd";
-
-        player.configure({
-            drm: drmConfig,
-            networking: {
-                requestFilter: (type, request) => {
-                    if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-                        type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
-                        request.headers['Cookie'] = cookieHeader;
-                    }
-                }
-            }
-        });
-
-        ui.configure({
-            controlPanelElements: ["play_pause", "mute", "volume", "spacer", "time_and_duration", "quality", "fullscreen", "overflow_menu"],
-            volumeBarColors: {
-                base: "rgba(0, 0, 255, 1)",
-                level: "rgb(0, 255, 0)"
-            },
-            seekBarColors: {
-                base: "rgb(255, 0, 0)",
-                buffered: "rgb(255, 255, 0)",
-                played: "rgba(0, 128, 128, 1)"
-            }
-        });
-
-        window.player = player;
-        window.ui = ui;
-
-        player.addEventListener("error", onPlayerErrorEvent);
-        controls.addEventListener("error", onUIErrorEvent);
-
-        try {
-            await player.load(streamUrl);
-            console.log("✅ The video has now been loaded!");
-        } catch (error) {
-            onPlayerError(error);
-        }
-    }
-
-    function onPlayerErrorEvent(event) {
-        onPlayerError(event.detail);
-    }
-
-    function onPlayerError(error) {
-        console.error("Error code", error.code, "object", error);
-    }
-
-    function onUIErrorEvent(event) {
-        onPlayerError(event.detail);
-    }
-
-    function initFailed() {
-        console.error("Unable to load the UI library!");
-    }
-
-    document.addEventListener("shaka-ui-loaded", init);
-    document.addEventListener("shaka-ui-load-failed", initFailed);
-
-    if (confirm("Join For More Links!!")) {
-        window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
-    }
     </script>
-</body>
-</html>
+  </div>
+
+  <!-- A-Ads at Top -->
+  <div class="ad-container" id="frame" style="width:120px; height:auto;">
+    <iframe data-aa="2409634" src="//ad.a-ads.com/2409634?size=120x60" style="width:120px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;"></iframe>
+    <a style="display: block; text-align: right; font-size: 12px;" id="preview-link" href="https://aads.com/campaigns/new/?source_id=2409634&amp;source_type=ad_unit&amp;partner=2409634">Advertise here</a>
+  </div>
+
+  <div id="urlFormContainer">
+    <form id="urlForm">
+      <label for="urlInput">URL:</label>
+      <input type="text" id="urlInput" name="urlInput" required="">
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <iframe id="contentFrame" sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen="true" scrolling="no">
+  </iframe>
+
+  <script>
+    // Function to get query parameter
+    function getQueryParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // Event listener for form submission
+    document.getElementById('urlForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var url = document.getElementById('urlInput').value;
+      if (url) {
+        window.location.href = `${window.location.pathname}?url=${encodeURIComponent(url)}`;
+      } else {
+        alert("Please enter a valid URL.");
+      }
+    });
+
+    // On page load, check for URL and set iframe src
+    window.onload = function() {
+      var url = getQueryParameter('url');
+      if (url) {
+        document.getElementById('contentFrame').src = url;
+        document.getElementById('urlFormContainer').style.display = 'none';
+      }
+    };
+  </script>
+
+  <!-- First Ad Block -->
+  <div class="ad-container">
+    <script async="async" data-cfasync="false" src="//ascertainowlbookkeeper.com/29880634ec9e229e821a7176ae8af8d8/invoke.js"></script>
+    <div id="container-29880634ec9e229e821a7176ae8af8d8"></div>
+  </div>
+
+
+<a href="https://adexchangeclear.com/ad/visit.php?al=1" style="display: none; visibility: hidden; position: relative; left: -1000px; top: -1000px;"></a></body></html>
