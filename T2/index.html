@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TG_@Cricinsider365</title>
+  <title>The Cricsters - Iframe</title>
   <style>
     body {
       margin: 0;
@@ -23,8 +23,8 @@
       border-radius: 10px;
       margin: 10px 0;
     }
-    .buttons {
-      margin: 15px 0;
+    .section {
+      margin: 20px 0;
     }
     .btn {
       padding: 10px 20px;
@@ -33,14 +33,11 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 16px;
+      background: #444;
+      color: #fff;
     }
     .btn.active {
       background: #1e90ff;
-      color: #fff;
-    }
-    .btn.inactive {
-      background: #444;
-      color: #fff;
     }
     .telegram {
       display: inline-block;
@@ -59,63 +56,34 @@
   <h1>THE CRICSTERS</h1>
 
   <!-- Iframe for streaming -->
-  <iframe id="streamFrame" src="https://tataplay.slivcdn.com/hls/live/2020591/TEN3HD/master_3500.m3u8" allowfullscreen></iframe>
+  <iframe id="streamFrame" src="" allowfullscreen></iframe>
 
-  <!-- Language buttons -->
-  <div class="buttons">
-    <button class="btn active" onclick="setStream('hindi')">Hindi</button>
-    <button class="btn inactive" onclick="setStream('english')">English</button>
+  <!-- Hindi Quality Buttons -->
+  <div class="section">
+    <h2>Hindi</h2>
+    <button class="btn" onclick="setStream('https://yourlink.com/hindi_1080p.m3u8')">1080p</button>
+    <button class="btn" onclick="setStream('https://yourlink.com/hindi_720p.m3u8')">720p</button>
+    <button class="btn" onclick="setStream('https://yourlink.com/hindi_540p.m3u8')">540p</button>
   </div>
 
-  <!-- Quality buttons -->
-  <div class="buttons">
-    <button class="btn active" onclick="setQuality('1080p')">1080p</button>
-    <button class="btn inactive" onclick="setQuality('720p')">720p</button>
-    <button class="btn inactive" onclick="setQuality('540p')">540p</button>
+  <!-- English Quality Buttons -->
+  <div class="section">
+    <h2>English</h2>
+    <button class="btn" onclick="setStream('https://yourlink.com/english_1080p.m3u8')">1080p</button>
+    <button class="btn" onclick="setStream('https://yourlink.com/english_720p.m3u8')">720p</button>
+    <button class="btn" onclick="setStream('https://yourlink.com/english_540p.m3u8')">540p</button>
   </div>
 
   <!-- Telegram -->
   <a class="telegram" href="https://t.me/yourchannel" target="_blank">Join us on Telegram</a>
 
   <script>
-    let currentLang = "hindi";
-    let currentQuality = "1080p";
-
-    function setStream(lang) {
-      currentLang = lang;
-      updateIframe();
-      updateButtons();
-    }
-
-    function setQuality(q) {
-      currentQuality = q;
-      updateIframe();
-      updateButtons();
-    }
-
-    function updateIframe() {
-      // Replace links with your actual streaming URLs
-      let url = `https://example.com/${currentLang}_${currentQuality}`;
+    function setStream(url) {
       document.getElementById("streamFrame").src = url;
-    }
 
-    function updateButtons() {
-      document.querySelectorAll(".buttons .btn").forEach(btn => btn.classList.remove("active"));
-      document.querySelectorAll(".buttons .btn").forEach(btn => btn.classList.add("inactive"));
-
-      // Activate correct buttons
-      document.querySelectorAll(".buttons")[0].querySelectorAll(".btn").forEach(btn => {
-        if (btn.innerText.toLowerCase() === currentLang) {
-          btn.classList.add("active");
-          btn.classList.remove("inactive");
-        }
-      });
-      document.querySelectorAll(".buttons")[1].querySelectorAll(".btn").forEach(btn => {
-        if (btn.innerText === currentQuality) {
-          btn.classList.add("active");
-          btn.classList.remove("inactive");
-        }
-      });
+      // active button highlight
+      document.querySelectorAll(".btn").forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
     }
   </script>
 
