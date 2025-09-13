@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TG_@Cricinsider365</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.compiled.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
 
   <style>
@@ -119,9 +119,25 @@
   <script>
     async function init() {
       const video = document.getElementById("video");
-      const ui = video.ui;
+
+      // ✅ Shaka UI setup
+      const ui = video["ui"];
       const controls = ui.getControls();
       const player = controls.getPlayer();
+
+      // ✅ Add resolution/quality selection
+      ui.configure({
+        controlPanelElements: [
+          "play_pause",
+          "time_and_duration",
+          "spacer",
+          "mute",
+          "volume",
+          "fullscreen",
+          "overflow_menu"
+        ],
+        overflowMenuButtons: ["quality", "language", "captions"]
+      });
 
       player.configure({
         drm: {
