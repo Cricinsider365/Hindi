@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Cricsters ✘ BigCric</title>
+  <title>TG_@Cricinsider365</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
 
@@ -95,7 +95,7 @@
 
 <body>
   <!-- Header -->
-  <div class="header">The Cricsters ✘ BigCric</div>
+  <div class="header">TG_@Cricinsider365</div>
 
   <!-- Video -->
   <div class="video-box">
@@ -126,13 +126,13 @@
       player.configure({
         drm: {
           clearKeys: {
-            'e31a5a81caff5d07ea2411a571fc2e59': "96c5ef69479732ae734f962748c19729"
+            '48bef83b4c6a3c5189b01b0126210da4': "bd085230b7b09e50954fe0af111a8a9f"
           }
         }
       });
 
       try {
-        await player.load("https://live.ll.ww.aiv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/i2pcjr4pe5/out/v1/912e9db56d75403b8a9ac0a719110f36/cenc.mpd");
+        await player.load("https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd");
         console.log("The video has now been loaded!");
       } catch (error) {
         console.error("Error loading video", error);
@@ -154,7 +154,7 @@
     function sharePage() {
       if (navigator.share) {
         navigator.share({
-          title: "The Cricsters ✘ BigCric",
+          title: "@Cricinsider365",
           text: "Watch Live Cricket Now 🚀",
           url: window.location.href
         }).catch((err) => console.error("Error sharing:", err));
