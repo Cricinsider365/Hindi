@@ -1,184 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TG_@Cricinsider365</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.compiled.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>TG_@Cricinsider365</title>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">    <style>  
+    body {  
+      margin: 0;  
+      background-color: #0a1744;  
+      font-family: Arial, sans-serif;  
+      color: white;  
+      text-align: center;  
+    }  
+  
+    /* Header */  
+    .header {  
+      background: #03265c;  
+      padding: 14px;  
+      font-size: 20px;  
+      font-weight: bold;  
+      border-bottom: 2px solid #004aad;  
+      border-radius: 6px;  
+      margin: 10px;  
+    }  
+  
+    /* Video */  
+    .video-box {  
+      margin: 15px;  
+      border-radius: 12px;  
+      overflow: hidden;  
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);  
+    }  
+  
+    video {  
+      width: 100%;  
+      height: auto;  
+    }  
+  
+    /* Buttons Box */  
+    .btn-box {  
+      margin: 15px auto;  
+      padding: 15px;  
+      background: #03265c;  
+      border-radius: 10px;  
+      width: 90%;  
+      max-width: 500px;  
+    }  
+  
+    .btn-box h3 {  
+      margin: 12px 0;  
+      font-size: 18px;  
+    }  
+  
+    /* Default Blue Button */  
+    .btn {  
+      display: block;  
+      text-decoration: none;  
+      color: white;  
+      font-weight: bold;  
+      background: #007bff;  
+      padding: 14px;  
+      margin: 10px 0;  
+      border-radius: 8px;  
+      transition: 0.3s;  
+      border: 1px solid #fff;  
+    }  
+  
+    .btn:hover {  
+      background: #0056b3;  
+    }  
+  
+    /* Red Important Button */  
+    .btn-red {  
+      background: #e60000;  
+      border: 1px solid #fff;  
+    }  
+  
+    .btn-red:hover {  
+      background: #b30000;  
+    }  
+  
+    .important-text {  
+      font-size: 16px;  
+      font-weight: bold;  
+      color: #ff4444;  
+      margin-top: 15px;  
+      margin-bottom: 5px;  
+    }  
+  </style>  </head>  <body>  
+  <!-- Header -->  
+  <div class="header">TG_@Cricinsider365</div>    <!-- Video -->    <div class="video-box">  
+    <div data-shaka-player-container>  
+      <video autoplay muted data-shaka-player id="video" poster="https://i.ibb.co/x7jXd29/In-Shot-20241215-002653932.jpg"></video>  
+    </div>  
+  </div>    <!-- Buttons -->    <div class="btn-box">  
+    <h3>📢 Follow us for Updates!</h3>  
+    <a href="https://t.me/+IhSW51QysxU3NzY1" class="btn">Click Here To Join Telegram For More Links</a>  <!-- Important Button -->  
+<div class="important-text">❗ IMPORTANT</div>  
+<a href="#" onclick="copyLink()" class="btn btn-red">Copy Link & Use in Chrome Browser Only</a>  
 
-  <style>
-    body {
-      margin: 0;
-      background-color: #0a1744;
-      font-family: Arial, sans-serif;
-      color: white;
-      text-align: center;
-    }
+<a href="#" onclick="sharePage()" class="btn">Click Here To Share This Page Link ❤️</a>
 
-    /* Header */
-    .header {
-      background: #03265c;
-      padding: 14px;
-      font-size: 20px;
-      font-weight: bold;
-      border-bottom: 2px solid #004aad;
-      border-radius: 6px;
-      margin: 10px;
-    }
-
-    /* Video */
-    .video-box {
-      margin: 15px;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 12px rgba(0,0,0,0.6);
-    }
-
-    video {
-      width: 100%;
-      height: auto;
-    }
-
-    /* Buttons Box */
-    .btn-box {
-      margin: 15px auto;
-      padding: 15px;
-      background: #03265c;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-    }
-
-    .btn-box h3 {
-      margin: 12px 0;
-      font-size: 18px;
-    }
-
-    /* Default Blue Button */
-    .btn {
-      display: block;
-      text-decoration: none;
-      color: white;
-      font-weight: bold;
-      background: #007bff;
-      padding: 14px;
-      margin: 10px 0;
-      border-radius: 8px;
-      transition: 0.3s;
-      border: 1px solid #fff;
-    }
-
-    .btn:hover {
-      background: #0056b3;
-    }
-
-    /* Red Important Button */
-    .btn-red {
-      background: #e60000;
-      border: 1px solid #fff;
-    }
-
-    .btn-red:hover {
-      background: #b30000;
-    }
-
-    .important-text {
-      font-size: 16px;
-      font-weight: bold;
-      color: #ff4444;
-      margin-top: 15px;
-      margin-bottom: 5px;
-    }
-  </style>
-</head>
-
-<body>
-  <!-- Header -->
-  <div class="header">TG_@Cricinsider365</div>
-
-  <!-- Video -->
-  <div class="video-box">
-    <div data-shaka-player-container>
-      <video autoplay muted data-shaka-player id="video" poster="https://i.ibb.co/x7jXd29/In-Shot-20241215-002653932.jpg"></video>
-    </div>
-  </div>
-
-  <!-- Buttons -->
-  <div class="btn-box">
-    <h3>📢 Follow us for Updates!</h3>
-    <a href="https://t.me/+IhSW51QysxU3NzY1" class="btn">Click Here To Join Telegram For More Links</a>
-
-    <!-- Important Button -->
-    <div class="important-text">❗ IMPORTANT</div>
-    <a href="#" onclick="copyLink()" class="btn btn-red">Copy Link & Use in Chrome Browser Only</a>
-
-    <a href="#" onclick="sharePage()" class="btn">Click Here To Share This Page Link ❤️</a>
-  </div>
-
-  <script>
-    async function init() {
-      const video = document.getElementById("video");
-
-      // ✅ Shaka UI setup
-      const ui = video["ui"];
-      const controls = ui.getControls();
-      const player = controls.getPlayer();
-
-      // ✅ Gear (⚙️) icon before fullscreen with Quality selector
-      ui.configure({
-        controlPanelElements: [
-          "play_pause",
-          "time_and_duration",
-          "spacer",
-          "mute",
-          "volume",
-          "quality",   // 👈 Quality selector
-          "fullscreen" // 👈 Fullscreen button
-        ],
-        overflowMenuButtons: ["quality"]
-      });
-
-      // ✅ DRM keys (if needed)
-      player.configure({
-        drm: {
-          clearKeys: {
-            '48bef83b4c6a3c5189b01b0126210da4': "bd085230b7b09e50954fe0af111a8a9f"
-          }
-        }
-      });
-
-      try {
-        await player.load("https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd");
-        console.log("The video has now been loaded!");
-      } catch (error) {
-        console.error("Error loading video", error);
-      }
-    }
-
-    document.addEventListener("shaka-ui-loaded", init);
-
-    // ✅ Copy Link Function
-    function copyLink() {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        alert("✅ Link copied! Now open it in Chrome Browser.");
-      }).catch(() => {
-        alert("❌ Failed to copy. Please copy manually.");
-      });
-    }
-
-    // ✅ Share Function
-    function sharePage() {
-      if (navigator.share) {
-        navigator.share({
-          title: "@Cricinsider365",
-          text: "Watch Live Cricket Now 🚀",
-          url: window.location.href
-        }).catch((err) => console.error("Error sharing:", err));
-      } else {
-        alert("Sharing not supported on this browser.");
-      }
-    }
-  </script>
-</body>
-</html>
+  </div>    <script>  
+    async function init() {  
+      const video = document.getElementById("video");  
+      const ui = video.ui;  
+      const controls = ui.getControls();  
+      const player = controls.getPlayer();  
+  
+      player.configure({  
+        drm: {  
+          clearKeys: {  
+            '48bef83b4c6a3c5189b01b0126210da4': "bd085230b7b09e50954fe0af111a8a9f"  
+          }  
+        }  
+      });  
+  
+      try {  
+        await player.load("https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd");  
+        console.log("The video has now been loaded!");  
+      } catch (error) {  
+        console.error("Error loading video", error);  
+      }  
+    }  
+  
+    document.addEventListener("shaka-ui-loaded", init);  
+  
+    // ✅ Copy Link Function  
+    function copyLink() {  
+      navigator.clipboard.writeText(window.location.href).then(() => {  
+        alert("✅ Link copied! Now open it in Chrome Browser.");  
+      }).catch(() => {  
+        alert("❌ Failed to copy. Please copy manually.");  
+      });  
+    }  
+  
+    // ✅ Share Function  
+    function sharePage() {  
+      if (navigator.share) {  
+        navigator.share({  
+          title: "@Cricinsider365",  
+          text: "Watch Live Cricket Now 🚀",  
+          url: window.location.href  
+        }).catch((err) => console.error("Error sharing:", err));  
+      } else {  
+        alert("Sharing not supported on this browser.");  
+      }  
+    }  
+  </script>  </body>  
+</html>  
