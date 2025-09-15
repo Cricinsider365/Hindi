@@ -1,116 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TG_@Cricinsider365</title>
-    <style>
-        /* General Page Styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #242424, #3b5998);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-        }
+<html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>TG_@Cricinsider365</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
+<style>
+    body {
+        background-color: #000;
+        margin: 0;
+    }
 
-        /* Glowing Effect for Message */
-        .loading-message {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffcc00;
-            margin-bottom: 10px;
-            padding: 10px 20px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-            box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00;
-            animation: glow 1.5s infinite alternate;
-        }
+    /* Container for video and logo */
+    .video-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+    }
 
-        @keyframes glow {
-            0% { box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00; }
-            100% { box-shadow: 0 0 15px #ffcc00, 0 0 25px #ffcc00, 0 0 35px #ffcc00; }
-        }
+    /* Style for the logo */
+    .logo {
+        position: absolute;
+        top: 10px; /* Adjust vertical position */
+        left: 10px; /* Adjust horizontal position */
+        z-index: 1; /* Ensure the logo appears above the video */
+        max-width: 120px; /* Set maximum width for the logo */
+        max-height: 120px; /* Set maximum height for the logo */
+        pointer-events: none; /* Prevent interference with video controls */
+    }
 
-        /* Video Player Styling */
-        .player-container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 20px auto;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            overflow: hidden;
-            background: #000;
-        }
+    .shaka-spinner-container {
+        display: none;
+    }
 
-        .player-container iframe {
-            border-radius: 15px;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Join Telegram Button */
-        .join-telegram-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .join-telegram-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background-color: #008fd6;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .join-telegram-btn:hover {
-            background-color: #006bb3;
-        }
-    </style>
+    .uc {
+        pointer-events: none;
+    }
+</style>
 </head>
+
 <body>
+    <!-- Video container -->
+    <div class="video-container">
+        <!-- Logo inside the video -->
+        <img src="https://i.ibb.co/fMKnFg3/1000003992-removebg-preview.png" alt="Logo" class="logo">
 
-    <!-- Loading Message -->
-    <div class="loading-message">Share The Links With Your Friends</div>
-
-    <!-- Video Player Section -->
-    <div class="player-container">
-        <div style="padding:56.25% 0 0 0;position:relative;">
-            <iframe id="contentFrame" sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" 
-            frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen="true" scrolling="no" 
-            src="https://www.8088y.site/JioTv/play.php?id=1141" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+        <!-- Video player -->
+        <div data-shaka-player-container style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+            <video autoplay muted data-shaka-player id="video" poster="https://i.ibb.co/x7jXd29/In-Shot-20241215-002653932.jpg" style="width:100%; height:100%;"></video>
         </div>
     </div>
 
-    <!-- Join Telegram Button -->
-    <div class="join-telegram-container">
-        <button class="join-telegram-btn" onclick="window.open('https://t.me/+IhSW51QysxU3NzY1', '_blank')">Join Telegram Channel</button>
-    </div>
-<script>
-// alert('Join Our Telegram For Latest update')
-         if (confirm("Join Our Telegram Channel @Cricinsider365") == true) {
-         window.open("
-https://t.me/+IhSW51QysxU3NzY1", '_blank');
-     }
-</script>
-<script>
-// alert('Join Our Telegram For Latest update')
-         if (confirm("Join Our Telegram Channel @Cricinsider365") == true) {
-         window.open("https://t.me/+IhSW51QysxU3NzY1", '_blank');
-     }
-</script>
+    <script>
+    // Restrict iframe embedding
+    if (window.top !== window.self) {
+        window.addEventListener('DOMContentLoaded', function() {
+            // Clear the existing content
+            document.body.innerHTML = '';
 
+            // Add custom message
+            const messageDiv = document.createElement('div');
+            messageDiv.id = 'message';
+            messageDiv.textContent = 'Ab to copy mat kar chutiye By @Cricinsider365';
+
+            // Style the message
+            messageDiv.style.color = '#fff';
+            messageDiv.style.backgroundColor = '#000';
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '50%';
+            messageDiv.style.left = '50%';
+            messageDiv.style.transform = 'translate(-50%, -50%)';
+            messageDiv.style.padding = '20px';
+            messageDiv.style.borderRadius = '10px';
+            messageDiv.style.textAlign = 'center';
+            messageDiv.style.fontFamily = 'Arial, sans-serif';
+            messageDiv.style.fontSize = '20px';
+
+            // Append the message to the body
+            document.body.appendChild(messageDiv);
+        });
+    }
+
+    async function init() {
+        const video = document.getElementById("video");
+        const ui = video.ui;
+        const controls = ui.getControls();
+        const player = controls.getPlayer();
+
+        player.configure({
+            drm: {
+                clearKeys: {
+                    '400131994b445d8c8817202248760fda': "2d56cb6f07a75b9aff165d534ae2bfc4"
+                }
+            }
+        });
+
+        ui.configure({
+            controlPanelElements: ["play_pause", "mute", "volume", "spacer", "time_and_duration", "quality", "fullscreen", "overflow_menu"],
+            volumeBarColors: {
+                base: "rgba(0, 0, 255, 1)", // Blue base color for the volume bar
+                level: "rgb(0, 255, 0)"     // Green color for the volume level
+            },
+            seekBarColors: {
+                base: "rgb(255, 0, 0)",       // Red base color for the seek bar
+                buffered: "rgb(255, 255, 0)", // Yellow color for the buffered portion
+                played: "rgba(0, 128, 128, 1)" // Teal color for the played portion
+            }
+        });
+window.player = player;
+        window.ui = ui;
+
+        player.addEventListener("error", onPlayerErrorEvent);
+        controls.addEventListener("error", onUIErrorEvent);
+
+        try {
+            await player.load("https://jiotvmblive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd");
+            console.log("The video has now been loaded!");
+        } catch (error) {
+            onPlayerError(error);
+        }
+    }
+
+    function onPlayerErrorEvent(event) {
+        onPlayerError(event.detail);
+    }
+
+    function onPlayerError(error) {
+        console.error("Error code", error.code, "object", error);
+    }
+
+    function onUIErrorEvent(event) {
+        onPlayerError(event.detail);
+    }
+
+    function initFailed() {
+        console.error("Unable to load the UI library!");
+    }
+
+    document.addEventListener("shaka-ui-loaded", init);
+    document.addEventListener("shaka-ui-load-failed", initFailed);
+
+    if (confirm("Join For More Links!!")) {
+        window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
+    }
+    </script>
 </body>
 </html>
