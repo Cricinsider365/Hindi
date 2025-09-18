@@ -30,13 +30,12 @@
   </style>
 </head>
 <body>
-  <!-- Video player -->
+
   <video id="player" playsinline controls></video>
 
-  <!-- HLS.js & Plyr -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.1.4/dist/hls.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
-
   <script>
     async function getStreamUrl(id, preferredKey) {
       try {
@@ -58,7 +57,7 @@
           sony_cdn: match.STREAMING_CDN?.sony_cdn
         };
 
-        // If user requested specific key (?id=123&cdn=cloudfront_cdn)
+        // If user explicitly requests a key (?id=123&cloudfront_cdn)
         if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
           return sourceMap[preferredKey];
         }
@@ -78,16 +77,24 @@
       // Get query params
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get("id");
-      const preferredKey = urlParams.get("cdn"); // use &cdn=sony_cdn etc.
+      let preferredKey = null;
+
+      // Find which CDN flag was passed (?id=123&cloudfront_cdn)
+      for (const key of ["adfree_stream","dai_stream","Primary_Playback_URL","fancode_cdn","dai_google_cdn","cloudfront_cdn","sony_cdn"]) {
+        if (urlParams.has(key)) {
+          preferredKey = key;
+          break;
+        }
+      }
 
       if (!id) {
-        document.body.innerHTML = "<p style='color:white;text-align:center'>No ID provided (?id=)</p>";
+        document.body.innerHTML = "<p style='color:white;text-align:center;'>No ID provided in URL (?id=)</p>";
         return;
       }
 
       const source = await getStreamUrl(id, preferredKey);
       if (!source) {
-        document.body.innerHTML = <p style='color:white;text-align:center'>No playable stream found for ID ${id}</p>;
+        document.body.innerHTML = "<p style='color:white;text-align:center;'>No playable stream found for ID " + id + ".</p>";
         return;
       }
 
@@ -95,7 +102,6 @@
         const hls = new Hls({ maxMaxBufferLength: 100 });
         hls.loadSource(source);
         hls.attachMedia(video);
-
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           const availableQualities = hls.levels.map(level => level.height).filter(Boolean);
           const defaultQuality = availableQualities[0] || 360;
@@ -115,12 +121,13 @@
               }
             }
           });
-// Orientation lock on fullscreen
+
+          // Orientation lock
           document.addEventListener('fullscreenchange', () => {
             if (document.fullscreenElement) {
               if (screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('landscape').catch(err => {
-                  console.warn('Orientation lock failed:', err);
+                  console.error('Error locking orientation:', err);
                 });
               }
             }
@@ -130,21 +137,21 @@
         video.src = source;
         new Plyr(video);
       } else {
-        document.body.innerHTML = '<p style="color:white;text-align:center">Your browser does not support HLS playback.</p>';
+        document.body.innerHTML = '<p style="color:white;text-align:center;">Your browser does not support HLS playback.</p>';
       }
     });
 
-    // ===== Anti-iframe
+    // ====== Anti-iframe (kept, no popup)
     if (window.top !== window.self) {
       document.addEventListener('DOMContentLoaded', function () {
-        document.body.innerHTML = '<div style="color:white;text-align:center">Ab to copy mat kar chutiye</div>';
+        document.body.innerHTML = '<div style="color:red;text-align:center;padding-top:20px;">Ab to copy mat kar chutiye</div>';
       });
     }
 
-    // ===== Optional Telegram join prompt
+    // ====== Optional join prompt
     window.addEventListener("load", function () {
-      if (window.confirm("Join @Cricinsider365 for more live links?")) {
-        window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
+      if (window.confirm("Join @thecricsters for more live links?")) {
+        window.location.href = "https://t.me/+uBrjQXMdNqxkOWVl";
       }
     });
   </script>
