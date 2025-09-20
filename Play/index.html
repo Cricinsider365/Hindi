@@ -35,45 +35,42 @@
   <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
 
   <script>
-    async function getStreamUrl(id, preferredKey, lang='english') {
-      try {
-        const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
-        const data = await res.json();
-        const matches = data.matches.filter(m => m.match_id == id);
-        if (!matches.length) throw new Error("No stream found for ID " + id);
+    async function getStreamUrl(id, preferredKey, lang = 'english') {
+  try {
+    const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
+    const data = await res.json();
 
-        // Language match (Hindi support)
-        let match = matches.find(m => {
-          const mLang = (m.language || '').toLowerCase();
-          const userLang = lang.toLowerCase();
-          return mLang === userLang || (userLang === 'hindi' && mLang.includes('हिंदी'));
-        }) || matches[0];
+    const matches = data.matches.filter(m => m.match_id == id);
+    if (!matches.length) throw new Error("Stream not found for ID " + id);
 
-        // Available sources
-        const sourceMap = {
-          adfree_stream: match.adfree_stream,
-          dai_stream: match.dai_stream,
-          Primary_Playback_URL: match.STREAMING_CDN?.Primary_Playback_URL,
-          fancode_cdn: match.STREAMING_CDN?.fancode_cdn,
-          dai_google_cdn: match.STREAMING_CDN?.dai_google_cdn,
-          cloudfront_cdn: match.STREAMING_CDN?.cloudfront_cdn,
-          sony_cdn: match.STREAMING_CDN?.sony_cdn
-        };
+    let match = matches.find(m => {
+      const mLang = (m.language || '').toLowerCase();
+      const userLang = lang.toLowerCase();
+      return mLang === userLang || (userLang === 'hindi' && mLang.includes('हिंदी'));
+    }) || matches[0];
 
-        // If preferred CDN key exists, use it
-        if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
-          return sourceMap[preferredKey];
-        }
+    const sourceMap = {
+      adfree_stream: match.adfree_stream,
+      dai_stream: match.dai_stream,
+      Primary_Playback_URL: match.STREAMING_CDN?.Primary_Playback_URL,
+      fancode_cdn: match.STREAMING_CDN?.fancode_cdn,
+      dai_google_cdn: match.STREAMING_CDN?.dai_google_cdn,
+      cloudfront_cdn: match.STREAMING_CDN?.cloudfront_cdn,
+      sony_cdn: match.STREAMING_CDN?.sony_cdn
+    };
 
-        // Otherwise pick first available
-        const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
-        return sources.length ? sources[0] : null;
-
-      } catch (err) {
-        console.error("Error fetching JSON:", err);
-        return null;
-      }
+    if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
+      return sourceMap[preferredKey];
     }
+
+    const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
+    return sources.length ? sources[0] : null;
+
+  } catch (err) {
+    console.error("Error fetching JSON:", err);
+    return null;
+  }
+}
 
     document.addEventListener('DOMContentLoaded', async () => {
       const video = document.getElementById('player');
