@@ -17,63 +17,61 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.polyfilled.min.js"></script>
   <script>
-    // URL Params se id aur cdn lo
-    const urlParams = new URLSearchParams(window.location.search);
-    const matchId = urlParams.get('id');
-    const cdn = urlParams.get('cdn');
+    <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const matchId = urlParams.get('id');
+  const cdn = urlParams.get('cdn');
 
-    // JSON file jaha se links milenge
-    const DATA_URL = 'https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
+  const DATA_URL = 'https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
 
-    async function loadStream() {
-      try {
-        const res = await fetch(DATA_URL);
-        const data = await res.json();
-        const matches = Array.isArray(data.matches) ? data.matches : [];
-        const match = matches.find(m => String(m.match_id) === matchId);
+  async function loadStream() {
+    try {
+      const res = await fetch(DATA_URL);
+      const data = await res.json();
+      const matches = Array.isArray(data.matches) ? data.matches : [];
+      const match = matches.find(m => String(m.match_id) === matchId);
 
-        if (!match) {
-          alert('Match not found!');
-          return;
-        }
-
-        let streamUrl = null;
-
-        // Direct Hindi/English handling
-        if (cdn === "Hindi" || cdn === "English") {
-          if (match.STREAMING_CDN && match.STREAMING_CDN[cdn]) {
-            streamUrl = match.STREAMING_CDN[cdn];
-          }
-        }
-        // Normal CDN handling
-        else if (match[cdn]) {
-          streamUrl = match[cdn];
-        } else if (match.STREAMING_CDN && match.STREAMING_CDN[cdn]) {
-          streamUrl = match.STREAMING_CDN[cdn];
-        }
-
-        if (!streamUrl || streamUrl.toLowerCase() === "unavailable") {
-          alert("Stream not available for " + cdn);
-          return;
-        }
-
-        const video = document.getElementById('player');
-        if (Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(streamUrl);
-          hls.attachMedia(video);
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = streamUrl;
-        }
-
-        new Plyr(video, { autoplay: true });
-      } catch (err) {
-        console.error(err);
-        alert("Error loading stream!");
+      if (!match) {
+        alert('Match not found!');
+        return;
       }
-    }
 
-    loadStream();
-  </script>
-</body>
-</html>
+      console.log("Match JSON:", match); // 👈 Debug log
+
+      let streamUrl = null;
+
+      // Hindi / English keys directly check
+      if (cdn && match.STREAMING_CDN && match.STREAMING_CDN[cdn]) {
+        streamUrl = match.STREAMING_CDN[cdn];
+      }
+
+      // fallback: normal cdn key (adfree_stream, dai_stream etc)
+      if (!streamUrl && match[cdn]) {
+        streamUrl = match[cdn];
+      }
+
+      if (!streamUrl || streamUrl.toLowerCase() === "unavailable") {
+        alert("Stream not available for " + cdn);
+        return;
+      }
+
+      console.log("Selected stream URL:", streamUrl); // 👈 Debug log
+
+      const video = document.getElementById('player');
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(streamUrl);
+        hls.attachMedia(video);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = streamUrl;
+      }
+
+      new Plyr(video, { autoplay: true });
+    } catch (err) {
+      console.error(err);
+      alert("Error loading stream!");
+    }
+  }
+
+  loadStream();
+</script>
