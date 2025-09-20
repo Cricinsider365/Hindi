@@ -5,36 +5,26 @@
   <title>Live Stream Player</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta name="referrer" content="no-referrer">
-
-  <!-- Plyr CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.css">
-
   <style>
     body {
-      background-color: #000;
       margin: 0;
       padding: 0;
+      background-color: #000;
       overflow: hidden;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
     video {
       width: 100%;
       height: 100%;
-      max-width: 100%;
     }
-
-    .plyr {
-      height: 100%;
-    }
-
     #message {
       color: red;
-      font-size: 20px;
       text-align: center;
+      font-size: 20px;
     }
   </style>
 </head>
@@ -45,21 +35,21 @@
   <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
 
   <script>
-    async function getStreamUrl(id, preferredKey, lang = 'english') {
+    async function getStreamUrl(id, preferredKey, lang='english') {
       try {
         const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
         const data = await res.json();
-
         const matches = data.matches.filter(m => m.match_id == id);
-        if (!matches.length) throw new Error("Stream not found for ID " + id);
+        if (!matches.length) throw new Error("No stream found for ID " + id);
 
-        // Language matching with Hindi support
+        // Language match (Hindi support)
         let match = matches.find(m => {
-          const mLang = (m.language || '').toLowerCase().replace(/\s/g,'');
-          const userLang = lang.toLowerCase().replace(/\s/g,'');
+          const mLang = (m.language || '').toLowerCase();
+          const userLang = lang.toLowerCase();
           return mLang === userLang || (userLang === 'hindi' && mLang.includes('हिंदी'));
-        }) || matches[0]; // fallback to first available
+        }) || matches[0];
 
+        // Available sources
         const sourceMap = {
           adfree_stream: match.adfree_stream,
           dai_stream: match.dai_stream,
@@ -70,32 +60,27 @@
           sony_cdn: match.STREAMING_CDN?.sony_cdn
         };
 
+        // If preferred CDN key exists, use it
         if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
           return sourceMap[preferredKey];
         }
 
+        // Otherwise pick first available
         const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
-        return sources.length > 0 ? sources[0] : null;
+        return sources.length ? sources[0] : null;
+
       } catch (err) {
-        console.error("Error loading JSON:", err);
+        console.error("Error fetching JSON:", err);
         return null;
       }
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
       const video = document.getElementById('player');
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const id = urlParams.get("id");
-      const lang = urlParams.get("lang") || 'english';
-      let preferredKey = null;
-
-      for (const key of ["adfree_stream","dai_stream","Primary_Playback_URL","fancode_cdn","dai_google_cdn","cloudfront_cdn","sony_cdn"]) {
-        if (urlParams.has(key)) {
-          preferredKey = key;
-          break;
-        }
-      }
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const lang = params.get('lang') || 'english';
+      const preferredKey = params.get('cdn'); // read CDN param directly
 
       if (!id) {
         document.body.innerHTML = "<p>No ID provided in URL (?id=)</p>";
@@ -104,7 +89,7 @@
 
       const source = await getStreamUrl(id, preferredKey, lang);
       if (!source) {
-        document.body.innerHTML = "<p>No playable stream found for ID " + id + " in " + lang + ".</p>";
+        document.body.innerHTML = "<p>No playable stream found for this ID and language.</p>";
         return;
       }
 
@@ -114,46 +99,43 @@
         hls.attachMedia(video);
 
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          const availableQualities = hls.levels.map(l => l.height).filter(Boolean).sort((a,b)=>b-a);
-          const defaultQuality = availableQualities.includes(1080) ? 1080 : (availableQualities[0] || 360);
+          const qualities = hls.levels.map(l => l.height).filter(Boolean).sort((a,b)=>b-a);
+          const defaultQuality = qualities.includes(1080) ? 1080 : (qualities[0] || 360);
 
           const player = new Plyr(video, {
-            controls: ['play-large', 'play', 'mute', 'volume', 'settings', 'fullscreen'],
+            controls: ['play-large','play','mute','volume','settings','fullscreen'],
             quality: {
               default: defaultQuality,
-              options: availableQualities,
+              options: qualities,
               forced: true,
-              onChange: (quality) => {
-                hls.levels.forEach((level, idx) => {
-                  if (level.height === quality) hls.currentLevel = idx;
-                });
+              onChange: q => {
+                hls.levels.forEach((lvl, idx)=>{ if(lvl.height===q) hls.currentLevel=idx; });
               }
             }
           });
 
           document.addEventListener('fullscreenchange', () => {
             if (document.fullscreenElement && screen.orientation && screen.orientation.lock) {
-              screen.orientation.lock('landscape').catch(err => console.error(err));
+              screen.orientation.lock('landscape').catch(console.error);
             }
           });
         });
+
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = source;
         new Plyr(video);
       } else {
-        document.body.innerHTML = '<p>Your browser does not support HLS playback.</p>';
+        document.body.innerHTML = "<p>Your browser does not support HLS playback.</p>";
       }
     });
 
     // Anti-iframe
     if (window.top !== window.self) {
-      document.addEventListener('DOMContentLoaded', function () {
-        document.body.innerHTML = '<div id="message">Ab to copy mat kar chutiye</div>';
-      });
+      document.body.innerHTML = '<div id="message">Ab to copy mat kar chutiye</div>';
     }
 
     // Optional join prompt
-    window.addEventListener("load", function () {
+    window.addEventListener("load", () => {
       if (window.confirm("Join @thecricsters for more live links?")) {
         window.location.href = "https://t.me/+uBrjQXMdNqxkOWVl";
       }
