@@ -2,158 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TG_@Cricinsider365</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-  <meta name="referrer" content="no-referrer">
-
-  <!-- Plyr CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Play Stream</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.css" />
   <style>
-    body {
-      background-color: #000;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-    html, body {
-      height: 100%;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-    }
-    .plyr {
-      height: 100%;
-    }
+    body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    video { width: 100%; height: 100%; max-height: 100vh; background: #000; }
   </style>
 </head>
 <body>
 
   <video id="player" playsinline controls></video>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.1.4/dist/hls.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.polyfilled.min.js"></script>
   <script>
-    async function getStreamUrl(id, preferredKey) {
+    // URL Params se id aur cdn lo
+    const urlParams = new URLSearchParams(window.location.search);
+    const matchId = urlParams.get('id');
+    const cdn = urlParams.get('cdn');
+
+    // JSON file jaha se links milenge
+    const DATA_URL = 'https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
+
+    async function loadStream() {
       try {
-        const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
+        const res = await fetch(DATA_URL);
         const data = await res.json();
+        const matches = Array.isArray(data.matches) ? data.matches : [];
+        const match = matches.find(m => String(m.match_id) === matchId);
 
-        // Find match by match_id
-        const match = data.matches.find(m => m.match_id == id);
-        if (!match) throw new Error("Stream not found for ID " + id);
-
-        // Map of possible sources
-        const sourceMap = {
-          adfree_stream: match.adfree_stream,
-          dai_stream: match.dai_stream,
-          Primary_Playback_URL: match.STREAMING_CDN?.Primary_Playback_URL,
-          fancode_cdn: match.STREAMING_CDN?.fancode_cdn,
-          dai_google_cdn: match.STREAMING_CDN?.dai_google_cdn,
-          cloudfront_cdn: match.STREAMING_CDN?.cloudfront_cdn,
-          sony_cdn: match.STREAMING_CDN?.sony_cdn
-        };
-
-        // If user explicitly requests a key (?id=123&cloudfront_cdn)
-        if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
-          return sourceMap[preferredKey];
+        if (!match) {
+          alert('Match not found!');
+          return;
         }
 
-        // Otherwise pick first available source
-        const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
-        return sources.length > 0 ? sources[0] : null;
+        let streamUrl = null;
+
+        // Direct Hindi/English handling
+        if (cdn === "Hindi" || cdn === "English") {
+          if (match.STREAMING_CDN && match.STREAMING_CDN[cdn]) {
+            streamUrl = match.STREAMING_CDN[cdn];
+          }
+        }
+        // Normal CDN handling
+        else if (match[cdn]) {
+          streamUrl = match[cdn];
+        } else if (match.STREAMING_CDN && match.STREAMING_CDN[cdn]) {
+          streamUrl = match.STREAMING_CDN[cdn];
+        }
+
+        if (!streamUrl || streamUrl.toLowerCase() === "unavailable") {
+          alert("Stream not available for " + cdn);
+          return;
+        }
+
+        const video = document.getElementById('player');
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(streamUrl);
+          hls.attachMedia(video);
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = streamUrl;
+        }
+
+        new Plyr(video, { autoplay: true });
       } catch (err) {
-        console.error("Error loading JSON:", err);
-        return null;
+        console.error(err);
+        alert("Error loading stream!");
       }
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const video = document.getElementById('player');
-
-      // Get query params
-      const urlParams = new URLSearchParams(window.location.search);
-      const id = urlParams.get("id");
-      let preferredKey = null;
-
-      // Find which CDN flag was passed (?id=123&cloudfront_cdn)
-      for (const key of ["adfree_stream","dai_stream","Primary_Playback_URL","fancode_cdn","dai_google_cdn","cloudfront_cdn","sony_cdn"]) {
-        if (urlParams.has(key)) {
-          preferredKey = key;
-          break;
-        }
-      }
-
-      if (!id) {
-        document.body.innerHTML = "<p style='color:white;text-align:center;'>No ID provided in URL (?id=)</p>";
-        return;
-      }
-
-      const source = await getStreamUrl(id, preferredKey);
-      if (!source) {
-        document.body.innerHTML = "<p style='color:white;text-align:center;'>No playable stream found for ID " + id + ".</p>";
-        return;
-      }
-
-      if (Hls.isSupported()) {
-        const hls = new Hls({ maxMaxBufferLength: 100 });
-        hls.loadSource(source);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          const availableQualities = hls.levels.map(level => level.height).filter(Boolean);
-          const defaultQuality = availableQualities[0] || 360;
-
-          const player = new Plyr(video, {
-            controls: ['play-large', 'play', 'mute', 'volume', 'settings', 'fullscreen'],
-            quality: {
-              default: defaultQuality,
-              options: availableQualities,
-              forced: true,
-              onChange: (quality) => {
-                hls.levels.forEach((level, levelIndex) => {
-                  if (level.height === quality) {
-                    hls.currentLevel = levelIndex;
-                  }
-                });
-              }
-            }
-          });
-
-          // Orientation lock
-          document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-              if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(err => {
-                  console.error('Error locking orientation:', err);
-                });
-              }
-            }
-          });
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = source;
-        new Plyr(video);
-      } else {
-        document.body.innerHTML = '<p style="color:white;text-align:center;">Your browser does not support HLS playback.</p>';
-      }
-    });
-
-    // ====== Anti-iframe (kept, no popup)
-    if (window.top !== window.self) {
-      document.addEventListener('DOMContentLoaded', function () {
-        document.body.innerHTML = '<div style="color:red;text-align:center;padding-top:20px;">Ab to copy mat kar chutiye</div>';
-      });
-    }
-
-    // ====== Optional join prompt
-    window.addEventListener("load", function () {
-      if (window.confirm("Join @Cricinsider365 for more live links?")) {
-        window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
-      }
-    });
+    loadStream();
   </script>
 </body>
 </html>
