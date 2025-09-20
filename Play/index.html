@@ -53,8 +53,12 @@
         const matches = data.matches.filter(m => m.match_id == id);
         if (!matches.length) throw new Error("Stream not found for ID " + id);
 
-        // Get match by language (case-insensitive)
-        let match = matches.find(m => m.language.toLowerCase() === lang.toLowerCase()) || matches[0];
+        // Language matching with Hindi support
+        let match = matches.find(m => {
+          const mLang = (m.language || '').toLowerCase().replace(/\s/g,'');
+          const userLang = lang.toLowerCase().replace(/\s/g,'');
+          return mLang === userLang || (userLang === 'hindi' && mLang.includes('हिंदी'));
+        }) || matches[0]; // fallback to first available
 
         const sourceMap = {
           adfree_stream: match.adfree_stream,
@@ -141,12 +145,14 @@
       }
     });
 
+    // Anti-iframe
     if (window.top !== window.self) {
       document.addEventListener('DOMContentLoaded', function () {
         document.body.innerHTML = '<div id="message">Ab to copy mat kar chutiye</div>';
       });
     }
 
+    // Optional join prompt
     window.addEventListener("load", function () {
       if (window.confirm("Join @thecricsters for more live links?")) {
         window.location.href = "https://t.me/+uBrjQXMdNqxkOWVl";
