@@ -30,10 +30,8 @@
   </style>
 </head>
 <body>
-  <!-- Video player -->
   <video id="player" playsinline controls></video>
 
-  <!-- HLS.js & Plyr -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.1.4/dist/hls.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
 
@@ -43,11 +41,10 @@
         const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
         const data = await res.json();
 
-        // Find match by match_id
         const match = data.matches.find(m => m.match_id == id);
         if (!match) throw new Error("Stream not found for ID " + id);
 
-        // Map of possible sources
+        // Map of sources including Hindi
         const sourceMap = {
           adfree_stream: match.adfree_stream,
           dai_stream: match.dai_stream,
@@ -55,17 +52,17 @@
           fancode_cdn: match.STREAMING_CDN?.fancode_cdn,
           dai_google_cdn: match.STREAMING_CDN?.dai_google_cdn,
           cloudfront_cdn: match.STREAMING_CDN?.cloudfront_cdn,
-          sony_cdn: match.STREAMING_CDN?.sony_cdn
+          sony_cdn: match.STREAMING_CDN?.sony_cdn,
+          hindi_stream: match.STREAMING_CDN?.hindi_stream
         };
 
-        // If user requested specific key (?id=123&cdn=cloudfront_cdn)
         if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
           return sourceMap[preferredKey];
         }
 
-        // Otherwise pick first available source
         const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
         return sources.length > 0 ? sources[0] : null;
+
       } catch (err) {
         console.error("Error loading JSON:", err);
         return null;
@@ -75,21 +72,24 @@
     document.addEventListener('DOMContentLoaded', async () => {
       const video = document.getElementById('player');
 
-      // Get query params
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get("id");
-      const preferredKey = urlParams.get("cdn"); // use &cdn=sony_cdn etc.
+      const preferredKey = urlParams.get("cdn");
 
       if (!id) {
-        document.body.innerHTML = "<p style='color:white;text-align:center'>No ID provided (?id=)</p>";
+        document.body.innerHTML = `<p style="color:white;text-align:center">No ID provided (?id=)</p>`;
         return;
       }
 
       const source = await getStreamUrl(id, preferredKey);
       if (!source) {
-        document.body.innerHTML = <p style='color:white;text-align:center'>No playable stream found for ID ${id}</p>;
+        document.body.innerHTML = `<p style="color:white;text-align:center">No playable stream found for ID ${id}</p>`;
         return;
       }
+
+      const plyrOptions = {
+        controls: ['play-large', 'play', 'mute', 'volume', 'settings', 'pip', 'fullscreen']
+      };
 
       if (Hls.isSupported()) {
         const hls = new Hls({ maxMaxBufferLength: 100 });
@@ -100,48 +100,46 @@
           const availableQualities = hls.levels.map(level => level.height).filter(Boolean);
           const defaultQuality = availableQualities[0] || 360;
 
-          const player = new Plyr(video, {
-            controls: ['play-large', 'play', 'mute', 'volume', 'settings', 'fullscreen'],
-            quality: {
-              default: defaultQuality,
-              options: availableQualities,
-              forced: true,
-              onChange: (quality) => {
-                hls.levels.forEach((level, levelIndex) => {
-                  if (level.height === quality) {
-                    hls.currentLevel = levelIndex;
-                  }
-                });
-              }
+          plyrOptions.quality = {
+            default: defaultQuality,
+            options: availableQualities,
+            forced: true,
+            onChange: (quality) => {
+              hls.levels.forEach((level, levelIndex) => {
+                if (level.height === quality) hls.currentLevel = levelIndex;
+              });
             }
-          });
-// Orientation lock on fullscreen
+          };
+
+          const player = new Plyr(video, plyrOptions);
+
+          // Fullscreen orientation lock
           document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-              if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(err => {
-                  console.warn('Orientation lock failed:', err);
-                });
-              }
+            if (document.fullscreenElement && screen.orientation?.lock) {
+              screen.orientation.lock('landscape').catch(err => console.warn('Orientation lock failed:', err));
             }
           });
         });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = source;
-        new Plyr(video);
+        new Plyr(video, plyrOptions);
       } else {
         document.body.innerHTML = '<p style="color:white;text-align:center">Your browser does not support HLS playback.</p>';
       }
+
+      // Enable Picture-in-Picture via double-click or PiP button
+      video.addEventListener('enterpictureinpicture', () => console.log('Entered PiP'));
+      video.addEventListener('leavepictureinpicture', () => console.log('Exited PiP'));
     });
 
-    // ===== Anti-iframe
+    // Anti-iframe
     if (window.top !== window.self) {
       document.addEventListener('DOMContentLoaded', function () {
         document.body.innerHTML = '<div style="color:white;text-align:center">Ab to copy mat kar chutiye</div>';
       });
     }
 
-    // ===== Optional Telegram join prompt
+    // Optional Telegram prompt
     window.addEventListener("load", function () {
       if (window.confirm("Join @Cricinsider365 for more live links?")) {
         window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
