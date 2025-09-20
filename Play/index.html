@@ -35,49 +35,51 @@
   <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
 
   <script>
-    async function getStreamUrl(id, preferredKey, lang = 'english') {
-  try {
-    const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
-    const data = await res.json();
+    async function getStreamUrl(id, preferredKey, lang='english') {
+      try {
+        const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
+        const data = await res.json();
 
-    const matches = data.matches.filter(m => m.match_id == id);
-    if (!matches.length) throw new Error("Stream not found for ID " + id);
+        const matches = data.matches.filter(m => m.match_id == id);
+        if (!matches.length) throw new Error("No stream found for ID " + id);
 
-    let match = matches.find(m => {
-      const mLang = (m.language || '').toLowerCase();
-      const userLang = lang.toLowerCase();
-      return mLang === userLang || (userLang === 'hindi' && mLang.includes('हिंदी'));
-    }) || matches[0];
+        // Fallback: always pick first available stream
+        let match = matches[0];
 
-    const sourceMap = {
-      adfree_stream: match.adfree_stream,
-      dai_stream: match.dai_stream,
-      Primary_Playback_URL: match.STREAMING_CDN?.Primary_Playback_URL,
-      fancode_cdn: match.STREAMING_CDN?.fancode_cdn,
-      dai_google_cdn: match.STREAMING_CDN?.dai_google_cdn,
-      cloudfront_cdn: match.STREAMING_CDN?.cloudfront_cdn,
-      sony_cdn: match.STREAMING_CDN?.sony_cdn
-    };
+        // If Hindi requested, still use first stream (simulate Netlify behavior)
+        if(lang.toLowerCase() === 'hindi') {
+          console.log("Hindi requested, but using English stream");
+        }
 
-    if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
-      return sourceMap[preferredKey];
+        const sourceMap = {
+          adfree_stream: match.adfree_stream,
+          dai_stream: match.dai_stream,
+          Primary_Playback_URL: match.STREAMING_CDN?.Primary_Playback_URL,
+          fancode_cdn: match.STREAMING_CDN?.fancode_cdn,
+          dai_google_cdn: match.STREAMING_CDN?.dai_google_cdn,
+          cloudfront_cdn: match.STREAMING_CDN?.cloudfront_cdn,
+          sony_cdn: match.STREAMING_CDN?.sony_cdn
+        };
+
+        if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
+          return sourceMap[preferredKey];
+        }
+
+        const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
+        return sources.length ? sources[0] : null;
+
+      } catch (err) {
+        console.error("Error fetching JSON:", err);
+        return null;
+      }
     }
-
-    const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
-    return sources.length ? sources[0] : null;
-
-  } catch (err) {
-    console.error("Error fetching JSON:", err);
-    return null;
-  }
-}
 
     document.addEventListener('DOMContentLoaded', async () => {
       const video = document.getElementById('player');
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
       const lang = params.get('lang') || 'english';
-      const preferredKey = params.get('cdn'); // read CDN param directly
+      const preferredKey = params.get('cdn'); // read CDN param
 
       if (!id) {
         document.body.innerHTML = "<p>No ID provided in URL (?id=)</p>";
@@ -86,7 +88,7 @@
 
       const source = await getStreamUrl(id, preferredKey, lang);
       if (!source) {
-        document.body.innerHTML = "<p>No playable stream found for this ID and language.</p>";
+        document.body.innerHTML = "<p>No playable stream found for this ID.</p>";
         return;
       }
 
