@@ -1,133 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cricinsider365</title>
-  <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #000000, #1a1a1a);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
-    }
+<html>
+<head>    
+  <meta charset="UTF-8">    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+  <title>Sony Liv</title>       
 
-    #logo {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      cursor: pointer;
-    }
+  <!-- Shaka Player -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>    
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">    
 
-    #logo img {
-      width: 180px;
-      height: auto;
-    }
+  <style>    
+    * { margin: 0; padding: 0; box-sizing: border-box; }    
+    html, body {    
+      background: #000;    
+      height: 100vh;    
+      width: 100vw;    
+      overflow: hidden;    
+      font-family: system-ui, -apple-system, sans-serif;    
+    }    
+    .shaka-video-container {    
+      position: absolute;    
+      inset: 0;    
+      width: 100%;    
+      height: 100%;    
+    }    
+    video {    
+      width: 100%;    
+      height: 100%;    
+      background: #000;    
+      object-fit: contain;    
+    }    
+    /* Hide spinner */
+    .shaka-spinner-container,    
+    .shaka-spinner,    
+    .shaka-spinner-svg {    
+      display: none !important;    
+      visibility: hidden !important;    
+      opacity: 0 !important;    
+    }    
+  </style>    
+</head>    
+<body>    
 
-    #video {
-      width: 90%;
-      max-width: 720px;
-      margin: 60px auto 20px auto;
-      border: 2px solid #1e90ff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-      transition: border 0.3s;
-    }
-
-    .fullscreen #video {
-      border: none;
-      box-shadow: none;
-    }
-
-    #telegramButton {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 250px;
-      height: 50px;
-      background: linear-gradient(90deg, #1e90ff, #001f3f);
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      border: none;
-      border-radius: 25px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-      cursor: pointer;
-      overflow: hidden;
-      position: relative;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    #telegramButton:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
-      background: linear-gradient(90deg, #001f3f, #1e90ff);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Logo -->
-  <div id="logo" onclick="redirectToWebsite()">
-    <img src="https://i.postimg.cc/rw0xB8nh/IMG-20250217-230348-305.png" alt="Logo" />
+  <!-- ✅ Video container with video tag -->
+  <div class="shaka-video-container shaka-mobile" data-shaka-player="" data-shaka-player-container="" shaka-controls="true" style="cursor: none;">
+    <video autoplay playsinline></video>
   </div>
 
-  <!-- Video Player -->
-  <div id="video"></div>
-
-  <!-- Telegram Button -->
-  <div id="telegramButton" onclick="redirectToTelegram()">
-    Join Telegram For More Live Links 
-  </div>
-
-  <script>
-    // Initialize JWPlayer
-    const playerInstance = jwplayer("video").setup({
-      width: "100%",
-      aspectratio: "16:9",
-      autostart: true,
-      mute: false,
-      file: "https://d1zq5no55rw5ua.cloudfront.net/136742_hindi_hls_03dea3461951169ta-di_h264/index.m3u8",
-      skin: {
-        name: "glow"
-      }
-    });
-
-    // Handle fullscreen class
-    playerInstance.on('fullscreen', function (event) {
-      if (event.fullscreen) {
-        document.body.classList.add('fullscreen');
-      } else {
-        document.body.classList.remove('fullscreen');
-      }
-    });
-
-    // Telegram redirect
-    function redirectToTelegram() {
-      window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
-    }
-
-    // Logo redirect
-    function redirectToWebsite() {
-      window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
-    }
-
-    // Optional: Prompt before redirecting
-    window.onload = function () {
-      if (confirm("Join Our Telegram Channel to stay updated!")) {
-        redirectToTelegram();
-      }
-    };
-  </script>
+  <script>    
+    document.addEventListener('DOMContentLoaded', async () => {    
+      shaka.polyfill.installAll();    
+    
+      if (!shaka.Player.isBrowserSupported()) {    
+        console.error('Browser not supported');    
+        return;    
+      }    
+    
+      const video = document.querySelector('video');    
+      const player = new shaka.Player(video);    
+    
+      const container = document.querySelector('.shaka-video-container');    
+      const ui = new shaka.ui.Overlay(player, container, video);    
+    
+      ui.configure({    
+        controlPanelElements: [    
+          'play_pause', 'time_and_duration', 'mute', 'volume',    
+          'spacer', 'language', 'captions', 'picture_in_picture',    
+          'quality', 'fullscreen'    
+        ],    
+        volumeBarColors: {    
+          base: 'rgba(255, 192, 203, 0.3)',    
+          level: 'rgb(255, 105, 180)'    
+        },    
+        seekBarColors: {    
+          base: 'rgba(255, 255, 0, 0.3)',    
+          buffered: 'rgba(255, 255, 0, 0.6)',    
+          played: 'rgb(255, 255, 0)'    
+        }    
+      });    
+    
+      // ✅ DRM keys    
+      let drmConfig = {    
+        clearKeys: {    
+          "31b13c6f241055aaa965263f3115e684": "61f0cbc9599925a7be93d45e30b8ebe9"    
+        }    
+      };    
+    
+      // ✅ Headers + Cookie    
+      let cookieHeader = "__hdnea__=st=1758392406~exp=1758478806~acl=/*~hmac=48d94f13ec574d6d9798365f006cd430ccd5ca3d776bde0a3335f979bf794bc5";    
+      let streamUrl = "https://jiotvbpkmob.cdn.jio.com/bpk-tv/Asia_Cup_English_MOB/WDVLive/index.mpd?__hdnea__=st=1758392406~exp=1758478806~acl=/*~hmac=48d94f13ec574d6d9798365f006cd430ccd5ca3d776bde0a3335f979bf794bc5";    
+    
+      player.configure({    
+        drm: drmConfig,    
+        streaming: {    
+          lowLatencyMode: true,    
+          bufferingGoal: 15,    
+          rebufferingGoal: 2,    
+          bufferBehind: 15,    
+          retryParameters: { timeout: 10000, maxAttempts: 5, baseDelay: 300, backoffFactor: 1.2 },    
+          segmentRequestTimeout: 8000,    
+          segmentPrefetchLimit: 2,    
+          useNativeHlsOnSafari: true    
+        },    
+        manifest: {    
+          retryParameters: { timeout: 8000, maxAttempts: 3 }    
+        }    
+      });    
+    
+      // ✅ Add headers    
+      player.getNetworkingEngine().registerRequestFilter((type, request) => {    
+        request.headers['Referer'] = 'https://www.jiotv.com/';    
+        request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";    
+        request.headers['Cookie'] = cookieHeader;    
+      });    
+    
+      // Autoplay handling    
+      const attemptAutoplay = async () => {    
+        try {    
+          video.muted = false;    
+          await video.play();    
+          console.log('Unmuted autoplay successful');    
+        } catch {    
+          try {    
+            video.muted = true;    
+            await video.play();    
+            console.log('Muted autoplay successful');    
+          } catch (err) {    
+            console.log('Autoplay failed:', err.message);    
+          }    
+        }    
+      };    
+    
+      player.addEventListener('error', (event) => {    
+        console.error('Shaka Player Error:', event.detail);    
+      });    
+    
+      try {    
+        await player.load(streamUrl);    
+        attemptAutoplay();    
+      } catch (error) {    
+        console.error('Load error:', error);    
+      }    
+    });    
+  </script>    
 </body>
 </html>
