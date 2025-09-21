@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cricinsider365</title>
-  <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwplayer@8.32.0/jwplayer.js"></script>
   <style>
     body {
       margin: 0;
@@ -91,19 +91,18 @@
   </div>
 
   <script>
-    // Initialize JWPlayer
+    // JWPlayer setup
+    jwplayer.key = ""; // Open-source JWPlayer ke liye key ki zaroorat nahi hai (CDN version)
     const playerInstance = jwplayer("video").setup({
+      file: "https://d285kzy11wjv54.cloudfront.net/out/v1/0c63d485c6904eea88bb6f04e1b73c77/index.m3u8",
       width: "100%",
       aspectratio: "16:9",
       autostart: true,
       mute: false,
-      file: "https://d285kzy11wjv54.cloudfront.net/out/v1/0c63d485c6904eea88bb6f04e1b73c77/index.m3u8",
-      skin: {
-        name: "glow"
-      }
+      controls: true
     });
 
-    // Handle fullscreen class
+    // Fullscreen border handling
     playerInstance.on('fullscreen', function (event) {
       if (event.fullscreen) {
         document.body.classList.add('fullscreen');
@@ -122,7 +121,7 @@
       window.location.href = "https://t.me/+IhSW51QysxU3NzY1";
     }
 
-    // Optional: Prompt before redirecting
+    // Optional popup
     window.onload = function () {
       if (confirm("Join Our Telegram Channel to stay updated!")) {
         redirectToTelegram();
