@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cricinsider365</title>
-  <script src="https://cdn.jsdelivr.net/npm/jwplayer@8.32.0/jwplayer.js"></script>
+  
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
+
   <style>
     body {
       margin: 0;
@@ -83,32 +85,33 @@
   </div>
 
   <!-- Video Player -->
-  <div id="video"></div>
+  <video id="player" playsinline controls></video>
 
   <!-- Telegram Button -->
   <div id="telegramButton" onclick="redirectToTelegram()">
     Join Telegram For More Live Links 
   </div>
 
-  <script>
-    // JWPlayer setup
-    jwplayer.key = ""; // Open-source JWPlayer ke liye key ki zaroorat nahi hai (CDN version)
-    const playerInstance = jwplayer("video").setup({
-      file: "https://d285kzy11wjv54.cloudfront.net/out/v1/0c63d485c6904eea88bb6f04e1b73c77/index.m3u8",
-      width: "100%",
-      aspectratio: "16:9",
-      autostart: true,
-      mute: false,
-      controls: true
-    });
+  <!-- Plyr + HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
 
-    // Fullscreen border handling
-    playerInstance.on('fullscreen', function (event) {
-      if (event.fullscreen) {
-        document.body.classList.add('fullscreen');
-      } else {
-        document.body.classList.remove('fullscreen');
-      }
+  <script>
+    const video = document.getElementById('player');
+    const source = "https://d285kzy11wjv54.cloudfront.net/out/v1/0c63d485c6904eea88bb6f04e1b73c77/index.m3u8";
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(source);
+      hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = source;
+    }
+
+    const player = new Plyr(video, {
+      autoplay: true,
+      muted: false,
+      ratio: "16:9"
     });
 
     // Telegram redirect
