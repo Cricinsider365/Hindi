@@ -1,116 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TG_@Cricinsider365</title>
-    <style>
-        /* General Page Styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #242424, #3b5998);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-        }
+  <title>Live Stream Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="referrer" content="no-referrer">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.css">
 
-        /* Glowing Effect for Message */
-        .loading-message {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffcc00;
-            margin-bottom: 10px;
-            padding: 10px 20px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-            box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00;
-            animation: glow 1.5s infinite alternate;
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ffcc00; }
-            100% { box-shadow: 0 0 15px #ffcc00, 0 0 25px #ffcc00, 0 0 35px #ffcc00; }
-        }
-
-        /* Video Player Styling */
-        .player-container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 20px auto;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            overflow: hidden;
-            background: #000;
-        }
-
-        .player-container iframe {
-            border-radius: 15px;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Join Telegram Button */
-        .join-telegram-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .join-telegram-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background-color: #008fd6;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .join-telegram-btn:hover {
-            background-color: #006bb3;
-        }
-    </style>
+  <style>
+    body {
+      background-color: #000;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    html, body {
+      height: 100%;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+    }
+    .plyr {
+      height: 100%;
+    }
+    * {
+      user-select: auto;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Loading Message -->
-    <div class="loading-message">Share The Links With Your Friends</div>
+  <!-- Video Player -->
+  <video id="player" controls playsinline></video>
 
-    <!-- Video Player Section -->
-    <div class="player-container">
-        <div style="padding:56.25% 0 0 0;position:relative;">
-            <iframe id="contentFrame" sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" 
-            frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen="true" scrolling="no" 
-            src="https://sliv-english.vercel.app/?id=136745&cdn=Primary_Playback_URL&lang=hindi" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
-        </div>
-    </div>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.1.4/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
+  <script>
+    async function getStreamUrl(id, preferredKey, lang = 'english') {
+      try {
+        const res = await fetch("https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json");
+        const data = await res.json();
 
-    <!-- Join Telegram Button -->
-    <div class="join-telegram-container">
-        <button class="join-telegram-btn" onclick="window.open('https://t.me/+IhSW51QysxU3NzY1', '_blank')">Join Telegram Channel</button>
-    </div>
-<script>
-// alert('Join Our Telegram For Latest update')
-         if (confirm("Join Our Telegram Channel @Cricinsider365") == true) {
-         window.open("
-https://t.me/+IhSW51QysxU3NzY1", '_blank');
-     }
-</script>
-<script>
-// alert('Join Our Telegram For Latest update')
-         if (confirm("Join Our Telegram Channel @Cricinsider365") == true) {
-         window.open("https://t.me/+IhSW51QysxU3NzY1", '_blank');
-     }
-</script>
+        const matches = data.matches.filter(m => m.match_id == id);
+        if (!matches.length) throw new Error("Stream not found for ID " + id);
 
+        let match = matches.find(m => m.language.toLowerCase() === lang.toLowerCase());
+        if (!match) match = matches[0];
+
+        const sourceMap = {
+          adfree_stream: match.adfree_stream,
+          dai_stream: match.dai_stream,
+          Primary_Playback_URL: match.STREAMING_CDN?.Primary_Playback_URL,
+          fancode_cdn: match.STREAMING_CDN?.fancode_cdn,
+          dai_google_cdn: match.STREAMING_CDN?.dai_google_cdn,
+          cloudfront_cdn: match.STREAMING_CDN?.cloudfront_cdn,
+          sony_cdn: match.STREAMING_CDN?.sony_cdn
+        };
+
+        if (preferredKey && sourceMap[preferredKey] && sourceMap[preferredKey] !== "Unavailable") {
+          return sourceMap[preferredKey];
+        }
+
+        const sources = Object.values(sourceMap).filter(url => url && url !== "Unavailable");
+        return sources.length > 0 ? sources[0] : null;
+      } catch (err) {
+        console.error("Error loading JSON:", err);
+        return null;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const video = document.getElementById('player');
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get("id");
+      const lang = urlParams.get("lang") || 'english';
+      let preferredKey = null;
+
+      for (const key of ["adfree_stream","dai_stream","Primary_Playback_URL","fancode_cdn","dai_google_cdn","cloudfront_cdn","sony_cdn"]) {
+        if (urlParams.has(key)) {
+          preferredKey = key;
+          break;
+        }
+      }
+
+      if (!id) {
+        document.body.innerHTML = "<p>No ID provided in URL (?id=)</p>";
+        return;
+      }
+
+      const source = await getStreamUrl(id, preferredKey, lang);
+      if (!source) {
+        document.body.innerHTML = "<p>No playable stream found for ID " + id + ".</p>";
+        return;
+      }
+
+      if (Hls.isSupported()) {
+        const hls = new Hls({ maxMaxBufferLength: 100 });
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          const availableQualities = hls.levels.map(level => level.height).filter(Boolean).sort((a, b) => b - a);
+          const defaultQuality = availableQualities.includes(1080) ? 1080 : (availableQualities[0] || 360);
+
+          const player = new Plyr(video, {
+            controls: ['play-large', 'play', 'mute', 'volume', 'settings', 'fullscreen'],
+            quality: {
+              default: defaultQuality,
+              options: availableQualities,
+              forced: true,
+              onChange: (quality) => {
+                hls.levels.forEach((level, levelIndex) => {
+                  if (level.height === quality) {
+                    hls.currentLevel = levelIndex;
+                  }
+                });
+              }
+            }
+          });
+
+          document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+              if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(err => {
+                  console.error('Error locking orientation:', err);
+                });
+              }
+            }
+          });
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = source;
+        new Plyr(video);
+      } else {
+        document.body.innerHTML = '<p>Your browser does not support HLS playback.</p>';
+      }
+    });
+
+    window.addEventListener("load", function () {
+      if (window.confirm("Join @matcheslinks for more live links?")) {
+        window.location.href = "https://t.me/+e3-eAje291cxNGNl";
+      }
+    });
+  </script>
 </body>
 </html>
